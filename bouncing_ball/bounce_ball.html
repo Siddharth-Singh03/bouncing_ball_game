@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bouncing Ball Game</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 1px solid #000;
+            background-color: #fff;
+        }
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bouncing Ball Game</h1>
+    <canvas id="gameCanvas" width="900" height="500"></canvas>
+    <button id="resetButton">Reset</button>
+    <div id="bounceCount">Bounces: 0</div>
+
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        const resetButton = document.getElementById("resetButton");
+        const bounceCountDisplay = document.getElementById("bounceCount");
+
+        const ball = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            radius: 20,
+            speed: 5,
+            dx: 2,
+            dy: 2,
+            bounceCount: 0,
+        };
+
+        function drawBall() {
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "#FF5733"; // Custom color for the ball
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        function moveBallTo(x, y) {
+            ball.x = x;
+            ball.y = y;
+            ball.bounceCount = 0;
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            drawBall();
+
+            // Check boundaries and bounce
+            if (ball.x + ball.dx > canvas.width - ball.radius || ball.x + ball.dx < ball.radius) {
+                ball.dx = -ball.dx;
+                ball.bounceCount++;
+            }
+
+            if (ball.y + ball.dy > canvas.height - ball.radius || ball.y + ball.dy < ball.radius) {
+                ball.dy = -ball.dy;
+                ball.bounceCount++;
+            }
+
+            bounceCountDisplay.innerText = `Bounces: ${ball.bounceCount}`;
+
+            ball.x += ball.dx;
+            ball.y += ball.dy;
+
+            requestAnimationFrame(draw);
+        }
+
+        canvas.addEventListener("click", (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - rect.left;
+            const mouseY = event.clientY - rect.top;
+
+            moveBallTo(mouseX, mouseY);
+        });
+
+        resetButton.addEventListener("click", () => {
+            moveBallTo(canvas.width / 2, canvas.height / 2);
+            bounceCountDisplay.innerText = `Bounces: 0`;
+        });
+
+        draw();
+    </script>
+</body>
+</html>
